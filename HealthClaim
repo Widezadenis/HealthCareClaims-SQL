@@ -74,4 +74,11 @@ Select ClaimAmount, MAX(ClaimType) AS TypeOfClaim, YEAR(ClaimDate) AS CostPerYea
 FROM dbo.health_insurance_claims
 GROUP BY YEAR(ClaimDate), ClaimAmount
 ORDER BY ClaimAmount DESC
---
+
+--Calculates the average cost  based on age group per year
+SELECT DISTINCT (PatientAge), AVG(ROUND(ClaimAmount, 0)) AS AverageCostPerAgeGroup, YEAR(ClaimDate) AS CostPerYear
+From dbo.health_insurance_claims
+GROUP BY PatientAge, YEAR(ClaimDate)
+ORDER BY PatientAge ASC
+
+
