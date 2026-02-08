@@ -1,0 +1,77 @@
+-- Selects all the data from the table
+SELECT * 
+FROM dbo.health_insurance_claims
+
+--Selects the claims that have been denied
+SELECT ProviderID, ClaimStatus 
+FROM dbo.health_insurance_claims
+WHERE ClaimStatus = 'Denied'
+
+--Selects the claims that have been approved
+SELECT ProviderID, ClaimStatus 
+FROM dbo.health_insurance_claims
+WHERE ClaimStatus = 'Approved'
+
+--Selects the claims that are pending
+SELECT ProviderID, ClaimStatus 
+FROM dbo.health_insurance_claims
+WHERE ClaimStatus = 'Pending'
+
+--Selects claims that have been denied by age
+SELECT PatientAge, ClaimType, ClaimStatus, ProviderSpecialty
+FROM dbo.health_insurance_claims
+WHERE ClaimStatus = 'Denied'
+ORDER BY(PatientAge)
+ 
+ --Calculates the total annual cost of health insurance claims, broken down by the type of claim. 
+SELECT YEAR(ClaimDate) As ClaimYear, ClaimType, SUM(ROUND(ClaimAmount, 0)) AS Cost
+FROM dbo.health_insurance_claims
+GROUP BY YEAR(ClaimDate), ClaimType
+
+-- Selects the minimum and maximum amount of claims that have been denied and approved
+SELECT ClaimType, ClaimStatus, MAX(ClaimAmount) As MaxAmount, MIN(ClaimAmount) As MinAmount
+FROM dbo.health_insurance_claims
+WHERE ClaimStatus = 'Denied'
+GROUP BY ClaimType, ClaimStatus
+
+-- Selects the minimum and maximum amount of claims that have been approved
+SELECT ClaimType, ClaimStatus, MAX(ClaimAmount) As MaxAmount, MIN(ClaimAmount) As MinAmount
+FROM dbo.health_insurance_claims
+WHERE ClaimStatus = 'Approved'
+GROUP BY ClaimType, ClaimStatus
+
+-- Selects the minimum and maximum amount of claims that have been denied and approved by gender
+SELECT ClaimType, ClaimStatus, PatientGender, MAX(ClaimAmount) As MaxAmount, MIN(ClaimAmount) As MinAmount
+FROM dbo.health_insurance_claims
+WHERE ClaimStatus = 'Denied'
+GROUP BY ClaimType, ClaimStatus, PatientGender
+ORDER By PatientGender
+
+--Counts the number of claims submitted by Women
+SELECT COUNT(PatientGender) As FemaleClaims
+FROM dbo.health_insurance_claims
+WHERE PatientGender = 'F'
+
+--Counts the number of claims submitted by Men 
+SELECT COUNT(PatientGender) As MaleClaims
+FROM dbo.health_insurance_claims
+WHERE PatientGender = 'M'
+
+--Calculates the total annual cost of health insurance claims for women, broken down by the type of claim. 
+SELECT PatientGender, YEAR(ClaimDate) As ClaimYear, ClaimType, SUM(ROUND(ClaimAmount, 0)) AS Cost
+FROM dbo.health_insurance_claims
+WHERE PatientGender = 'F'
+GROUP BY YEAR(ClaimDate), ClaimType, PatientGender
+
+--Calculates the total annual cost of health insurance claims for men, broken down by the type of claim. 
+SELECT PatientGender, YEAR(ClaimDate) As ClaimYear, ClaimType, SUM(ROUND(ClaimAmount, 0)) AS Cost
+FROM dbo.health_insurance_claims
+WHERE PatientGender = 'M'
+GROUP BY YEAR(ClaimDate), ClaimType, PatientGender
+
+--Calculates the most expensive claim type per year
+Select ClaimAmount, MAX(ClaimType) AS TypeOfClaim, YEAR(ClaimDate) AS CostPerYear
+FROM dbo.health_insurance_claims
+GROUP BY YEAR(ClaimDate), ClaimAmount
+ORDER BY ClaimAmount DESC
+--
